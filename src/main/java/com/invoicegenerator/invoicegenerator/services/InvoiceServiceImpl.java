@@ -42,6 +42,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         return invoice;
     }
 
+    @SneakyThrows
     @Override
     public void printInvoice(Invoice invoice) {
         Document document = new Document();
@@ -56,10 +57,51 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         document.open();
         Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+
+        PdfPTable table = new PdfPTable(3); // 3 columns.
+        table.setWidthPercentage(100); //Width 100%
+        table.setSpacingBefore(10f); //Space before table
+        table.setSpacingAfter(10f); //Space after table
+
+        //Set Column widths
+        float[] columnWidths = {1f, 1f, 1f};
+        table.setWidths(columnWidths);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph("Sprzedawca"));
+        cell1.setBorderColor(BaseColor.WHITE);
+        cell1.setPaddingLeft(10);
+        cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        PdfPCell cell2 = new PdfPCell();
+        cell2.setBorderColor(BaseColor.WHITE);
+
+
+        PdfPCell cell3 = new PdfPCell();
+        cell3.addElement(new Paragraph("Nabywca"));
+
+        cell3.setBorderColor(BaseColor.WHITE);
+        cell3.setPaddingLeft(10);
+        cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell3.addElement(new Paragraph(String.valueOf(invoice.getPrivatePurchaser().getEmail())));
+
+
+
+
         Chunk chunk = new Chunk(String.valueOf(invoice.getId()), font);
+        Chunk chunk1 = new Chunk(String.valueOf(invoice.getInvoiceNumber()), font);
+        table.addCell(cell1);
+        table.addCell(cell2);
+        table.addCell(cell3);
+
+
 
         try {
             document.add(chunk);
+            document.add(chunk1);
+            document.add(table);
+
         } catch (DocumentException e) {
             e.printStackTrace();
         }
