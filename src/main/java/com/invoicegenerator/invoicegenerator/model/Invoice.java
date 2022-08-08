@@ -46,6 +46,8 @@ public class Invoice {
     @OneToMany
     private List<InvoiceEntry> invoiceEntries;
 
+    private Float price;
+
     private String paymentType;
 
     private String dueDate;

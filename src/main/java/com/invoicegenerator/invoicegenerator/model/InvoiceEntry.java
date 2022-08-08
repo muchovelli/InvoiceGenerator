@@ -23,6 +23,10 @@ public class InvoiceEntry {
 
     private String name;
 
+    private String itemCode;
+
+    private float discount;
+
     private long quantity;
 
     private String quantityUnit;

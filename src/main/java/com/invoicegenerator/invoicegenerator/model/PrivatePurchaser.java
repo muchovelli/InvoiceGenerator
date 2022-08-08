@@ -22,9 +22,11 @@ public class PrivatePurchaser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
+
     private int vatId;
 
-    private String zipCode;
+    private String postCode;
 
     private String city;
 
