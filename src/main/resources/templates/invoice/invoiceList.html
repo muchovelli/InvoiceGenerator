@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice generator</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+<div>
+    <H1> Tasks: </H1>
+    <a th:href="@{/showNewInvoiceForm}" class="btn">Add Invoice</a>
+    <table border="1" class = "table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{'/page/' + Misplaced &{reverseSortDir}}">
+                    Date</a>
+            </th>
+            <th>
+                <a th:href="@{'/page/' + Misplaced &{reverseSortDir}}">
+                    Task Description</a>
+            </th>
+            <th>
+                <a th:href="@{'/page/' + Misplaced &{reverseSortDir}}">
+                    Priority</a>
+            </th>
+            <th> Actions </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice : ${invoiceList}">
+            <td th:text="${invoice.issueDate}"></td>
+            <td th:text="${invoice.place}"></td>
+            <td th:text="${invoice.price}"></td>
+            <td>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

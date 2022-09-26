@@ -3,7 +3,6 @@ package com.invoicegenerator.invoicegenerator.services;
 import com.invoicegenerator.invoicegenerator.model.Users.Role;
 import com.invoicegenerator.invoicegenerator.model.Users.User;
 import com.invoicegenerator.invoicegenerator.repository.UserRepository;
-import com.invoicegenerator.invoicegenerator.web.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService{
 
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -31,13 +32,19 @@ public class UserServiceImpl implements UserService{
         this.userRepository = userRepository;
     }
 
-    @Override
-    public User save(UserRegistrationDto registrationDto) {
-        User user = new User(registrationDto.getFirstName(),
-                registrationDto.getLastName(), registrationDto.getEmail(),
-                passwordEncoder.encode(registrationDto.getPassword()), Arrays.asList(new Role("ROLE_USER")));
+    public UserServiceImpl() {
 
-        return userRepository.save(user);
+    }
+
+    @Override
+    public User save(User user) {
+        User user1 = new User(1L, user.getFirstName(),
+                user.getLastName(), user.getEmail(),
+                user.getPassword(),
+                user.getRoles());
+
+
+        return userRepository.save(user1);
     }
 
     @Override
@@ -53,5 +60,20 @@ public class UserServiceImpl implements UserService{
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
+
+    public User findByEmail(String email){
+        for(User user : userRepository.findAll()){
+            if(user.getEmail().equals(email)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
 
 }

@@ -1,35 +1,49 @@
 package com.invoicegenerator.invoicegenerator.web;
 
-import com.invoicegenerator.invoicegenerator.services.UserService;
-import com.invoicegenerator.invoicegenerator.web.dto.UserRegistrationDto;
+import com.invoicegenerator.invoicegenerator.model.Users.User;
+import com.invoicegenerator.invoicegenerator.repository.UserRepository;
+import com.invoicegenerator.invoicegenerator.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/registration")
 public class UserRegistrationController {
 
-    private UserService userService;
+    UserRepository userRepository;
+    @Autowired
+    UserServiceImpl userServiceImpl;
 
-    public UserRegistrationController(UserService userService) {
-        super();
-        this.userService = userService;
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 
-    @ModelAttribute("user")
-    public UserRegistrationDto userRegistrationDto() {
-        return new UserRegistrationDto();
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model){
+        model.addAttribute("user", new User());
+        return "signup_form";
     }
 
-    @GetMapping
-    public String showRegistrationForm() {
-        return "registration";
+    @PostMapping("/process_register")
+    public String processRegister(User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        userServiceImpl.save(user);
+        return "register_success";
     }
 
-    @PostMapping
-    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto) {
-        userService.save(registrationDto);
-        return "redirect:/registration?success";
+    @GetMapping("/users")
+    public String listUsers(Model model) {
+        List<User> listUsers = userServiceImpl.findAll();
+        model.addAttribute("listUsers", listUsers);
+
+        return "users";
     }
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -37,10 +38,12 @@ public class Invoice {
 
     private String invoiceNumber;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
 
     private String place;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate saleDate;
 
     @OneToMany
@@ -62,8 +65,10 @@ public class Invoice {
 
     private Language language;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate sendTime;
 
     private String poNumber;

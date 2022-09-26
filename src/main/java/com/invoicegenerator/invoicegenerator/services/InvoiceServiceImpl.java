@@ -100,13 +100,11 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public List<Invoice> findAll() {
-        List<Invoice> invoicesList = invoiceRepository.findAll();
-        return invoicesList;
+        return invoiceRepository.findAll();
     }
 
     private Long getNextId(){
-        Long nextId = null;
-
+        Long nextId;
         try {
             nextId = Collections.max(map.keySet()) + 1;
         } catch (NoSuchElementException e) {

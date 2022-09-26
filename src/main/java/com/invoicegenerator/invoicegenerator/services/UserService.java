@@ -1,10 +1,13 @@
 package com.invoicegenerator.invoicegenerator.services;
 
 import com.invoicegenerator.invoicegenerator.model.Users.User;
-import com.invoicegenerator.invoicegenerator.web.dto.UserRegistrationDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UserService extends UserDetailsService {
-    User save(UserRegistrationDto userRegistrationDto);
+    User save(User user);
+    User findByEmail(String email);
+    List<User> findAll();
 
 }

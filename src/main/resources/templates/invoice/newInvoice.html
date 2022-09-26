@@ -31,11 +31,11 @@
 		</div>
 	</nav>
 
-    <form action="#" th:action="@{/saveTask}" th:object="${task}" method="post">
-        <input type="date" th:field="*{date}" placeholder="Date" class="form-control mb-4 col-4">
-        <input type="text" th:field="*{description}" placeholder="Description" class="form-control mb-4 col-4">
-        <input type="text" th:field="*{priority}" placeholder="Priority" class="form-control mb-4 col-4">
-        <button typ="submit" class="btn btn-info col-2">Save Employee</button>
+    <form action="#" th:action="@{/addNewInvoice}" th:object="${invoice}" method="post">
+        <input type="date" th:field="*{issueDate}" placeholder="Date" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{place}" placeholder="place" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{price}" placeholder="price" class="form-control mb-4 col-4">
+        <button typ="submit" class="btn btn-info col-2">Save Invoice</button>
     </form>
 
 </body>

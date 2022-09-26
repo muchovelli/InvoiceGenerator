@@ -34,7 +34,8 @@ public class User {
                     name = "user_id2", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-    public User(String firstName, String lastName, String email, String password, Collection<Role> roles) {
+    public User(Long id,String firstName, String lastName, String email, String password, Collection<Role> roles) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

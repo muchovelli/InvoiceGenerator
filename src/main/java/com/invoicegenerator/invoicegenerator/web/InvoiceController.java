@@ -17,14 +17,14 @@ public class InvoiceController {
     @GetMapping("/listOfInvoices")
     public String viewInvoiceList(Model model){
         model.addAttribute("invoiceList", invoiceService.findAll());
-        return "listOfInvoices";
+        return "invoice/invoiceList";
     }
 
     @GetMapping("/showNewInvoiceForm")
     public String showNewInvoiceForm(Model model){
         Invoice invoice = new Invoice();
-        model.addAttribute("invocie",invoice);
-        return "new_invoice";
+        model.addAttribute("invoice",invoice);
+        return "invoice/newInvoice";
     }
 
     @PostMapping("/addNewInvoice")
