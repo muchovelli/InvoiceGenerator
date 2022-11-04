@@ -40,9 +40,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 
 
     protected Map<Long, Invoice> map = new HashMap<>();
-    private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
+    private static final Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
             Font.BOLD);
-    private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
+    private static final Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
 
 
@@ -52,7 +52,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         if(invoice.getId() == null) invoice.setId(getNextId());
 
-        if(!verifyInvoice(invoice)) return null;
+        //if(!verifyInvoice(invoice)) return null;
 
         map.put(invoice.getId(),invoice);
         invoiceRepository.save(invoice);
@@ -117,9 +117,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         if(invoice.getPrivatePurchaser() == null
                 && invoice.getCompanyPurchaser() == null) return false;
 
-        if(invoice.getVendor() == null) return false;
-
-        return true;
+        return invoice.getVendor() != null;
     }
 
     private void addInvoiceDetails(Document document,

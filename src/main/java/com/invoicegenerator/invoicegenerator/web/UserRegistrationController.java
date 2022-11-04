@@ -4,6 +4,7 @@ import com.invoicegenerator.invoicegenerator.model.Users.User;
 import com.invoicegenerator.invoicegenerator.repository.UserRepository;
 import com.invoicegenerator.invoicegenerator.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,8 @@ public class UserRegistrationController {
     UserRepository userRepository;
     @Autowired
     UserServiceImpl userServiceImpl;
+
+
 
     @GetMapping("/login")
     public String login() {
@@ -43,7 +46,6 @@ public class UserRegistrationController {
     public String listUsers(Model model) {
         List<User> listUsers = userServiceImpl.findAll();
         model.addAttribute("listUsers", listUsers);
-
         return "users";
     }
 }

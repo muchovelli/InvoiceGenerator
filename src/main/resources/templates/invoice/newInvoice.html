@@ -32,6 +32,14 @@
 	</nav>
 
     <form action="#" th:action="@{/addNewInvoice}" th:object="${invoice}" method="post">
+
+            <input list="Vendor" name="Vendor" />
+                <datalist id="Vendor">
+                 <select class="form-control" id="testOrder" name="testOrder">
+                     <option th:each="privatePurchaser : ${privatePurchaser}" th:value="${privatePurchaser.name}"> </option>
+                 </select>
+                </datalist>
+
         <input type="date" th:field="*{issueDate}" placeholder="Date" class="form-control mb-4 col-4">
         <input type="text" th:field="*{place}" placeholder="place" class="form-control mb-4 col-4">
         <input type="text" th:field="*{price}" placeholder="price" class="form-control mb-4 col-4">

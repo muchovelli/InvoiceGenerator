@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Registration Success</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="bg-img">
+      <div class="container">
+        <div class="topnav">
+          <a href="#home">Home</a>
+          <a href="#home">Login</a>
+          <a href="#news">Register</a>
+          <a href="#contact">New Invoice</a>
+          <a href="#about">New Purchaser</a>
+          <a href="#home">Login</a>
+        </div>
+      </div>
+    </div>
+
+    <form th:action="@{/addNewPurchaser}" th:object="${PrivatePurchaser}"
+                method="post" style="max-width: 600px; margin: 0 auto;">
+            <div class="m-3">
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">E-mail: </label>
+                    <div class="col-8">
+                        <input type="email" th:field="*{email}" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Name: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{name}" class="form-control"
+                                required minlength="6" maxlength="10"/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Vat Id: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{vatId}" class="form-control"
+                                required minlength="2" maxlength="20"/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Post code: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{postCode}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Vat Id: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{vatId}" class="form-control"
+                                required minlength="2" maxlength="20"/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Post code: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{postCode}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">City: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{city}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Street: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{street}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Country: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{country}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Website: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{website}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Fax: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{fax}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Phone: </label>
+                    <div class="col-8">
+                        <input type="text" th:field="*{phone}" class="form-control"
+                                required minlength="2" maxlength="20" />
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+            </div>
+    </form>
+</body>
+</html>

@@ -42,4 +42,5 @@ public class PrivatePurchaser {
 
     private String phone;
 
+
 }

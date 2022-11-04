@@ -24,7 +24,7 @@ public class InvoiceServiceTest {
     void saveInvoiceTest(){
         Invoice invoice = new Invoice();
         invoice.setId(12222L);
-        invoice.setVendor(new Vendor(1L,"Twoja stara","5534234234","Poznanska 12", "30-020","Krakow",Country.POLAND,"45241241241412","mBank", "email@email.com"));
+        //invoice.setVendor(new Vendor(1L,"Twogggja stara","5534234234","Poznanska 12", "30-020","Krakow",Country.POLAND,"45241241241412","mBank", "email@email.com"));
         invoice.setPrivatePurchaser(new PrivatePurchaser(2L,"A-client", 52421342, "32020","Warszawa","Krakowska", Country.POLAND,"dudaa@dupa.pl","aaaa.pl","+924242","+48752412421"));
         invoice.setInvoiceNumber("n-01-01");
         invoice.setPaymentDate(LocalDate.of(2022,07,20));
@@ -39,5 +39,6 @@ public class InvoiceServiceTest {
         invoice.setStatus(Status.SENT);
         invoice.setAmountPaid("500");
         invoiceServiceImpl.printInvoice(invoice);
+
     }
 }
