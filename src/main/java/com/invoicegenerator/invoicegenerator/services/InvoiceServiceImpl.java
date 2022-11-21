@@ -14,18 +14,11 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.print.Doc;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService{
@@ -66,9 +59,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         String fileName = "invoice_" + invoice.getId()+1 + ".pdf";
         try {
             PdfWriter.getInstance(document, new FileOutputStream(fileName));
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        } catch (DocumentException | FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -83,7 +74,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         addItemsInfo(document, (ArrayList<InvoiceEntry>) invoice.getInvoiceEntries());
 
-        addPaymentInfo(document,invoice.getCurrency(),invoice.getAmountPaid(),invoice.getPrice());
+        addPaymentInfo(invoice.getCurrency(),invoice.getAmountPaid(),invoice.getPrice());
 
         document.close();
     }
@@ -103,8 +94,13 @@ public class InvoiceServiceImpl implements InvoiceService{
         return invoiceRepository.findAll();
     }
 
+    @Override
+    public List<PrivatePurchaser> findAllPrivatePurchasers(Vendor vendor) {
+        return vendor.getPrivatePurchaserList();
+    }
+
     private Long getNextId(){
-        Long nextId;
+        long nextId;
         try {
             nextId = Collections.max(map.keySet()) + 1;
         } catch (NoSuchElementException e) {
@@ -352,7 +348,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         document.add(table);
     }
 
-    private void addPaymentInfo(Document document, Currency currency, String amountPaid, Float price){
+    private void addPaymentInfo(Currency currency, String amountPaid, Float price){
 
     }
 

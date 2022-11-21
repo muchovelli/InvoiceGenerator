@@ -15,11 +15,8 @@ import java.util.List;
 @Controller
 public class UserRegistrationController {
 
-    UserRepository userRepository;
     @Autowired
     UserServiceImpl userServiceImpl;
-
-
 
     @GetMapping("/login")
     public String login() {

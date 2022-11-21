@@ -9,29 +9,27 @@
           crossorigin="anonymous">
 </head>
 <body>
-<!-- create navigation bar ( header) -->
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed"
-					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-					aria-controls="navbar">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#" th:href="@{/}">Registration and
-					Login Module</a>
-			</div>
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+<div>
+        <div class="container">
+            <div class="topnav">
+                  <a href="/">Home</a>
+                  <a href="/login">Login</a>
+                  <a href="/register">Register</a>
+                  <a href="/showNewInvoiceForm">New Invoice</a>
+                  <a href="/showNewPurchaser">New Purchaser</a>
+                  <a href="/listOfInvoices">List Of Invoices</a>
+            </div>
+        </div>
+    </div>
 
     <form action="#" th:action="@{/addNewInvoice}" th:object="${invoice}" method="post">
+
+            <div class="form-group">
+                <label for="birthplace">Purchaser</label>
+                    <select id="savedPrivatePurchasers" class="form-control select2-single" th:field="*{savedPrivatePurchasers}">
+                                    <option value="">Select Purchaser</option>
+                                </select>
+                            </div>
 
             <input list="Vendor" name="Vendor" />
                 <datalist id="Vendor">

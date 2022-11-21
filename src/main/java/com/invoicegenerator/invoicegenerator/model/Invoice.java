@@ -74,4 +74,7 @@ public class Invoice {
     private String poNumber;
 
     private String privateNote;
+
+    @OneToMany
+    private List<PrivatePurchaser> savedPrivatePurchasers;
 }

@@ -1,6 +1,7 @@
 package com.invoicegenerator.invoicegenerator.model.Users;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name = "role")
@@ -12,6 +13,15 @@ public class Role {
     private Long id;
 
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "roles_privileges",
+            joinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "privilege_id", referencedColumnName = "id"))
+    private Collection<Privilege> privileges;
 
     public Role(String name) {
         this.name = name;

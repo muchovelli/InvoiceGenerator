@@ -6,6 +6,7 @@ import com.invoicegenerator.invoicegenerator.model.Users.CustomUserDetails;
 import com.invoicegenerator.invoicegenerator.model.Users.User;
 import com.invoicegenerator.invoicegenerator.model.Vendor;
 import com.invoicegenerator.invoicegenerator.services.InvoiceService;
+import com.invoicegenerator.invoicegenerator.services.PrivatePurchaserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    PrivatePurchaserService privatePurchaserService;
 
     @GetMapping("/listOfInvoices")
     public String viewInvoiceList(Model model){
@@ -43,9 +47,11 @@ public class InvoiceController {
     @GetMapping("/showNewInvoiceForm")
     public String showNewInvoiceForm(Model model){
         Vendor vendor = new Vendor();
-        vendor.setName("stachu");
         Invoice invoice = new Invoice();
+        vendor = User.getVendor();
         model.addAttribute("invoice",invoice);
+        model.addAttribute("vendor",vendor);
+        invoice.setSavedPrivatePurchasers(vendor.getPrivatePurchaserList());
         return "invoice/newInvoice";
     }
 
@@ -54,4 +60,19 @@ public class InvoiceController {
         invoiceService.saveInvoice(invoice);
         return "redirect:/listOfInvoices";
     }
+
+    @PostMapping("/addNewPrivatePurchaser")
+    public String addNewPrivatePurchaser(@ModelAttribute("privatePurchaser")PrivatePurchaser privatePurchaser){
+        privatePurchaserService.save(privatePurchaser);
+        return "redirect:/listOfInvoices";
+    }
+
+    @GetMapping("/invoice/showNewPrivatePurchaserForm")
+    public String showNewPrivatePurchaserForm(Model model){
+        PrivatePurchaser privatePurchaser = new PrivatePurchaser();
+        model.addAttribute("privatePurchaser",privatePurchaser);
+        return "invoice/newPurchaser";
+    }
+
+
 }

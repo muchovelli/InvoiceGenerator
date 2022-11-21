@@ -8,6 +8,18 @@
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
+    <div>
+        <div class="container">
+            <div class="topnav">
+                  <a href="/">Home</a>
+                  <a href="/login">Login</a>
+                  <a href="/register">Register</a>
+                  <a href="/showNewInvoiceForm">New Invoice</a>
+                  <a href="/showNewPurchaser">New Purchaser</a>
+                  <a href="/listOfInvoices">List Of Invoices</a>
+            </div>
+        </div>
+    </div>
 <div class="container text-center">
     <div>
         <form th:action="@{/logout}" method="post">

@@ -1,6 +1,7 @@
 package com.invoicegenerator.invoicegenerator.model;
 
 import com.invoicegenerator.invoicegenerator.model.InvoiceEnums.Country;
+import com.invoicegenerator.invoicegenerator.model.Users.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Vendor {
+public class Vendor extends Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
