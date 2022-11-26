@@ -2,8 +2,7 @@ package com.invoicegenerator.invoicegenerator.web;
 
 import com.invoicegenerator.invoicegenerator.model.Invoice;
 import com.invoicegenerator.invoicegenerator.model.PrivatePurchaser;
-import com.invoicegenerator.invoicegenerator.model.Users.CustomUserDetails;
-import com.invoicegenerator.invoicegenerator.model.Users.User;
+
 import com.invoicegenerator.invoicegenerator.model.Vendor;
 import com.invoicegenerator.invoicegenerator.services.InvoiceService;
 import com.invoicegenerator.invoicegenerator.services.PrivatePurchaserService;
@@ -33,9 +32,6 @@ public class InvoiceController {
     @GetMapping("/getPrivatePurchasers")
     public String getPrivatePurchasers(Model model){
         Vendor vendor = new Vendor();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User customUser = (User) authentication.getPrincipal();
-        vendor.setId(customUser.getId());
         PrivatePurchaser privatePurchaser = new PrivatePurchaser();
         privatePurchaser.setName("aa");
         vendor.getPrivatePurchaserList().add(privatePurchaser);

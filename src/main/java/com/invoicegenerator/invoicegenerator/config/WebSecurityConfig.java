@@ -1,59 +1,105 @@
 package com.invoicegenerator.invoicegenerator.config;
 
-import javax.sql.DataSource;
-
-import com.invoicegenerator.invoicegenerator.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@EnableWebSecurity
+@Component
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true
+)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private DataSource dataSource;
+    public static final String AUTHORITIES_CLAIM_NAME = "roles";
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
-    }
+    private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
+    public WebSecurityConfig(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/users").authenticated()
-                .anyRequest().permitAll()
+        http
+                .cors()
                 .and()
-                .formLogin()
-                .usernameParameter("email")
-                .defaultSuccessUrl("/users")
-                .permitAll()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .logout().logoutSuccessUrl("/login").permitAll();
+                .authorizeRequests(configurer ->
+                        configurer
+                                .antMatchers(
+                                        "/error",
+                                        "/login"
+                                )
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                );
+
+        // JWT Validation Configuration
+        http.oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(authenticationConverter());
+    }
+
+    @Bean
+    @Override
+    protected UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+
+        UserDetails user1 = User
+                .withUsername("user1")
+                .authorities("ADMIN", "STAFF_MEMBER")
+                .passwordEncoder(passwordEncoder::encode)
+                .password("1234")
+                .build();
+        manager.createUser(user1);
+
+        UserDetails user2 = User
+                .withUsername("user2")
+                .authorities("STAFF_MEMBER")
+                .passwordEncoder(passwordEncoder::encode)
+                .password("1234")
+                .build();
+        manager.createUser(user2);
+
+        UserDetails user3 = User
+                .withUsername("user3")
+                .authorities("ASSISTANT_MANAGER", "STAFF_MEMBER")
+                .passwordEncoder(passwordEncoder::encode)
+                .password("1234")
+                .build();
+        manager.createUser(user3);
+
+        UserDetails user4 = User
+                .withUsername("user4")
+                .authorities("MANAGER", "STAFF_MEMBER")
+                .passwordEncoder(passwordEncoder::encode)
+                .password("1234")
+                .build();
+        manager.createUser(user4);
+
+        return manager;
+    }
+
+    protected JwtAuthenticationConverter authenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("");
+        authoritiesConverter.setAuthoritiesClaimName(AUTHORITIES_CLAIM_NAME);
+
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return converter;
     }
 }
