@@ -48,7 +48,7 @@ public class InvoiceController {
     public String showNewInvoiceForm(Model model){
         Vendor vendor = new Vendor();
         Invoice invoice = new Invoice();
-        vendor = User.getVendor();
+
         model.addAttribute("invoice",invoice);
         model.addAttribute("vendor",vendor);
         invoice.setSavedPrivatePurchasers(vendor.getPrivatePurchaserList());

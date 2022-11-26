@@ -76,6 +76,10 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         addPaymentInfo(invoice.getCurrency(),invoice.getAmountPaid(),invoice.getPrice());
 
+        addBreak(document,5);
+
+        addFooter(document);
+
         document.close();
     }
 
@@ -122,54 +126,29 @@ public class InvoiceServiceImpl implements InvoiceService{
                                    LocalDate paymentDate,
                                    LocalDate issueDate,
                                    String paymentType) throws DocumentException {
-        PdfPTable table = new PdfPTable(2);
-        table.setTotalWidth(new float[]{1, 1 });
-        //table.setLockedWidth(true);
+
+        //Invoice details view configuration
+        PdfPTable table = new PdfPTable(1);
+        table.setTotalWidth(new float[]{1});
         document.open();
 
-        //First row
-        PdfPCell cell = new PdfPCell(new Phrase("Faktura numer: " + invoiceNumber,smallFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
+        //Invoice number row
+        table.addCell(addBorderlessCell("Faktura numer: " + invoiceNumber,false, 15,true));
 
         //empty row
-        PdfPCell emptyCell = new PdfPCell(new Phrase(""));
-        emptyCell.setFixedHeight(15);
-        emptyCell.setBorder(Rectangle.NO_BORDER);
-        emptyCell.setColspan(2);
-        table.addCell(emptyCell);
+        addBreak(document, 1);
 
-        //First row
-        PdfPCell cell2 = new PdfPCell(new Phrase("Data wystawienia: " + saleDate,smallFont));
-        cell2.setFixedHeight(15);
-        cell2.setBorder(Rectangle.NO_BORDER);
-        cell2.setColspan(2);
-        table.addCell(cell2);
+        //Sale date row
+        table.addCell(addBorderlessCell("Data wystawienia: " + saleDate,false, 15,false));
 
-        //First row
-        PdfPCell cell5 = new PdfPCell(new Phrase("Data sprzedazy: " + paymentDate,smallFont));
-        cell5.setFixedHeight(15);
-        cell5.setBorder(Rectangle.NO_BORDER);
-        cell5.setColspan(2);
-        table.addCell(cell5);
+        //Payment due row
+        table.addCell(addBorderlessCell("Data sprzedazy: " + paymentDate,false, 15,false));
 
-        //First row
-        PdfPCell cell3 = new PdfPCell(new Phrase("Termin platności: " + issueDate,smallFont));
-        cell3.setFixedHeight(15);
-        cell3.setBorder(Rectangle.NO_BORDER);
-        cell3.setColspan(2);
-        table.addCell(cell3);
+        //Issue date row
+        table.addCell(addBorderlessCell("Termin platnosci: " + issueDate,false, 15,false));
 
-        //First row
-        PdfPCell cell4 = new PdfPCell(new Phrase("Platnosc: " + paymentType,smallFont));
-        cell4.setFixedHeight(15);
-        cell4.setBorder(Rectangle.NO_BORDER);
-        cell4.setColspan(2);
-        table.addCell(cell4);
-
-
+        //Payment type row
+        table.addCell(addBorderlessCell("Platnosc: " + paymentType,false, 15,false));
 
         document.add(table);
     }
@@ -177,172 +156,79 @@ public class InvoiceServiceImpl implements InvoiceService{
     private void addVendorSellerInfo(Document document,
                                      Vendor vendor,
                                      PrivatePurchaser privatePurchaser) throws DocumentException {
+
+        //Vendor and Seller view configuration
         PdfPTable table = new PdfPTable(2);
         table.setTotalWidth(new float[]{ 1,1});
-        //table.setLockedWidth(true);
-        //document.open();
+
 
         //First row
-        PdfPCell cell = new PdfPCell(new Phrase("Sprzedawca", smallFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Kupujacy" ,smallFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
+        table.addCell(addBorderlessCell("Sprzedawca",false, 15,true));
+        table.addCell(addBorderlessCell("Kupujący",false, 15,true));
 
         addBreak(document,2);
 
-        //First row
-        cell = new PdfPCell(new Phrase(vendor.getName(), smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(cell);
+        //Name row
+        table.addCell(addBorderlessCell(vendor.getName(),false, 15,false));
+        table.addCell(addBorderlessCell(privatePurchaser.getName(),false, 15,false));
 
-        cell = new PdfPCell(new Phrase(privatePurchaser.getName() ,smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
 
         //Street row
-        cell = new PdfPCell(new Phrase(vendor.getStreet(), smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(cell);
+        table.addCell(addBorderlessCell(vendor.getStreet(),false, 15,false));
+        table.addCell(addBorderlessCell(privatePurchaser.getStreet(),false, 15,false));
 
-        cell = new PdfPCell(new Phrase(privatePurchaser.getStreet() ,smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
 
         //Address row
-        cell = new PdfPCell(new Phrase(vendor.getPostCode() + " " + vendor.getCity() + ", " + vendor.getCountry(), smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(cell);
+        String vendorAddress = vendor.getPostCode() + " " + vendor.getCity() + ", " + vendor.getCountry();
+        table.addCell(addBorderlessCell(vendorAddress,false, 15,false));
 
-        cell = new PdfPCell(new Phrase(privatePurchaser.getPostCode() + " " + privatePurchaser.getCity() + ", " + privatePurchaser.getCountry() ,smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
+        String purchaserAddress = privatePurchaser.getPostCode() + " " + privatePurchaser.getCity() + ", " + privatePurchaser.getCountry();
+        table.addCell(addBorderlessCell(purchaserAddress,false, 15,false));
 
         //VatID row
-        cell = new PdfPCell(new Phrase(vendor.getVatId(), smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
-        table.addCell(cell);
+        table.addCell(addBorderlessCell(vendor.getVatId(),false, 15,false));
 
         //Contact row
-        cell = new PdfPCell(new Phrase(vendor.getEmail(), smallFont));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(cell);
-        cell.setColspan(2);
-
+        table.addCell(addBorderlessCell(vendor.getEmail(),false, 15,false));
 
         document.add(table);
     }
 
     private void addItemsInfo(Document document, ArrayList<InvoiceEntry> invoiceEntryList) throws DocumentException {
+        //Entry list view configuration
         PdfPTable table = new PdfPTable(8);
         table.setTotalWidth(new float[]{ 1,6,2,1,1,3,3,3});
 
-        //First row
-        PdfPCell cell = new PdfPCell(new Phrase("LP", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        table.addCell(cell);
+        //Title row
+        table.addCell(addItemsTitleCell("LP"));
+        table.addCell(addItemsTitleCell("Nazwa towaru / uslugi"));
+        table.addCell(addItemsTitleCell("Kod"));
+        table.addCell(addItemsTitleCell("Rabat"));
+        table.addCell(addItemsTitleCell("Ilosc"));
+        table.addCell(addItemsTitleCell("Cena "));
+        table.addCell(addItemsTitleCell("Cena po rabacie"));
+        table.addCell(addItemsTitleCell("Wartosc"));
 
-        cell = new PdfPCell(new Phrase("Nazwa towaru / uslugi", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Kod Produktu", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Rabat", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Ilosc", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Cena", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Cena po rabacie", entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Wartosc" ,entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.RECTANGLE);
-        cell.setColspan(2);
-        table.addCell(cell);
-
-        for(int i=0; i<invoiceEntryList.size();i++){
-            cell = new PdfPCell(new Phrase(String.valueOf(i+1), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(invoiceEntryList.get(i).getName(), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(invoiceEntryList.get(i).getItemCode(), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(String.valueOf(invoiceEntryList.get(i).getDiscount()), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(String.valueOf(invoiceEntryList.get(i).getQuantity()), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(String.valueOf(invoiceEntryList.get(i).getUnitNetPrice()), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            table.addCell(cell);
-
-            float priceFinal = invoiceEntryList.get(i).getUnitNetPrice() - invoiceEntryList.get(i).getUnitNetPrice()*invoiceEntryList.get(i).getDiscount();
-
-            cell = new PdfPCell(new Phrase(String.valueOf(priceFinal), entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(String.valueOf(priceFinal*invoiceEntryList.get(i).getQuantity()),entriesFont));
-            cell.setFixedHeight(15);
-            cell.setBorder(Rectangle.RECTANGLE);
-            cell.setColspan(2);
-            table.addCell(cell);
+        //Items row
+        for(int i=0; i<invoiceEntryList.size();++i){
+            //LP
+            table.addCell(addEntryCell(String.valueOf(i+1),true));
+            //Item name
+            table.addCell(addEntryCell(invoiceEntryList.get(i).getName(),true));
+            //Item code
+            table.addCell(addEntryCell(invoiceEntryList.get(i).getItemCode(),true));
+            //Discount
+            table.addCell(addEntryCell(String.valueOf(invoiceEntryList.get(i).getDiscount()),true));
+            //Quantity
+            table.addCell(addEntryCell(String.valueOf(invoiceEntryList.get(i).getQuantity()),true));
+            //Price
+            table.addCell(addEntryCell(String.valueOf(invoiceEntryList.get(i).getUnitNetPrice()),true));
+            //Price after discount
+            float priceAfterDiscount = invoiceEntryList.get(i).getUnitNetPrice() - invoiceEntryList.get(i).getUnitNetPrice()*invoiceEntryList.get(i).getDiscount();
+            table.addCell(addEntryCell(String.valueOf(priceAfterDiscount),true));
+            //Value
+            table.addCell(addEntryCell(String.valueOf(priceAfterDiscount*invoiceEntryList.get(i).getQuantity()),true));
         }
 
         document.add(table);
@@ -353,15 +239,63 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     private void addBreak(Document document, int number) throws DocumentException {
+        //Break view configuration
         PdfPTable table = new PdfPTable(2);
         table.setTotalWidth(new float[]{ 150, 150 });
         table.setLockedWidth(true);
+
         for(int i=0; i<number;i++){
-            PdfPCell cell = new PdfPCell(new Phrase(""));
-            cell.setFixedHeight(10);
-            cell.setBorder(Rectangle.NO_BORDER);
-            table.addCell(cell);
+            table.addCell(addBorderlessCell("Podpis i pieczatka",false,10,false));
         }
         document.add(table);
+    }
+
+    private void addFooter(Document document) throws DocumentException {
+        //View configuration
+        PdfPTable table = new PdfPTable(2);
+        table.setTotalWidth(new float[]{ 150, 150 });
+        table.setLockedWidth(true);
+
+        table.addCell(addBorderlessCell("Wystawil",false,15,false));
+        table.addCell(addBorderlessCell("Odebral",false,15,false));
+
+        document.add(table);
+    }
+
+    private void addSignature(Document document) throws DocumentException {
+        //View configuration
+        PdfPTable table = new PdfPTable(2);
+        table.setTotalWidth(new float[]{ 150, 150 });
+        table.setLockedWidth(true);
+
+        table.addCell(addBorderlessCell("Podpis wystawiajacego",false,15,false));
+        table.addCell(addBorderlessCell("Podpis kupujacego",false, 15,false));
+
+        document.add(table);
+    }
+
+    private PdfPCell addItemsTitleCell(String name){
+        PdfPCell cell = new PdfPCell(new Phrase(name, entriesFontBold));
+        cell.setFixedHeight(15);
+        cell.setBorder(Rectangle.BOTTOM);
+        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        return cell;
+    }
+
+    private PdfPCell addEntryCell(String text, boolean isLeftAligned){
+        PdfPCell cell = new PdfPCell(new Phrase((text), entriesFont));
+        cell.setFixedHeight(15);
+        cell.setBorder(Rectangle.RECTANGLE);
+        if(isLeftAligned) cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        return cell;
+    }
+
+    private PdfPCell addBorderlessCell(String text, boolean isLeftAligned, int fixedHeight, boolean isBold){
+        PdfPCell cell = new PdfPCell(new Phrase((text), smallFont));
+        cell.setFixedHeight(fixedHeight);
+        cell.setBorder(Rectangle.NO_BORDER);
+        if(isBold) cell.setPhrase(new Phrase((text), smallFontBold));
+        if(isLeftAligned) cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        return cell;
     }
 }
