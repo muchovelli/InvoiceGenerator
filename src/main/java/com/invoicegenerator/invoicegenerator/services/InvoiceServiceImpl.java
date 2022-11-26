@@ -38,6 +38,7 @@ public class InvoiceServiceImpl implements InvoiceService{
     private static final Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
 
+    private float finalCost = 0.0f;
 
     @Override
     public Invoice saveInvoice(Invoice invoice) {
@@ -45,7 +46,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         if(invoice.getId() == null) invoice.setId(getNextId());
 
-        //if(!verifyInvoice(invoice)) return null;
+        if(!verifyInvoice(invoice)) return null;
 
         map.put(invoice.getId(),invoice);
         invoiceRepository.save(invoice);
@@ -55,6 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService{
     @SneakyThrows
     @Override
     public void printInvoice(Invoice invoice) {
+        //Invoice document configuration
         Document document = new Document(com.itextpdf.text.PageSize.A4);
         String fileName = "invoice_" + invoice.getId()+1 + ".pdf";
         try {
@@ -72,13 +74,19 @@ public class InvoiceServiceImpl implements InvoiceService{
 
         addBreak(document,8);
 
+        addBottomBorder(document);
+
         addItemsInfo(document, (ArrayList<InvoiceEntry>) invoice.getInvoiceEntries());
 
         addPaymentInfo(invoice.getCurrency(),invoice.getAmountPaid(),invoice.getPrice());
 
+        addBreak(document,1);
+
+        addFinalCost(document);
+
         addBreak(document,5);
 
-        addFooter(document);
+        addSignature(document);
 
         document.close();
     }
@@ -229,6 +237,8 @@ public class InvoiceServiceImpl implements InvoiceService{
             table.addCell(addEntryCell(String.valueOf(priceAfterDiscount),true));
             //Value
             table.addCell(addEntryCell(String.valueOf(priceAfterDiscount*invoiceEntryList.get(i).getQuantity()),true));
+
+            finalCost = finalCost+priceAfterDiscount*invoiceEntryList.get(i).getQuantity();
         }
 
         document.add(table);
@@ -245,40 +255,56 @@ public class InvoiceServiceImpl implements InvoiceService{
         table.setLockedWidth(true);
 
         for(int i=0; i<number;i++){
-            table.addCell(addBorderlessCell("Podpis i pieczatka",false,10,false));
+            table.addCell(addBorderlessCell(" ",false,10,false));
         }
-        document.add(table);
-    }
-
-    private void addFooter(Document document) throws DocumentException {
-        //View configuration
-        PdfPTable table = new PdfPTable(2);
-        table.setTotalWidth(new float[]{ 150, 150 });
-        table.setLockedWidth(true);
-
-        table.addCell(addBorderlessCell("Wystawil",false,15,false));
-        table.addCell(addBorderlessCell("Odebral",false,15,false));
-
         document.add(table);
     }
 
     private void addSignature(Document document) throws DocumentException {
         //View configuration
         PdfPTable table = new PdfPTable(2);
-        table.setTotalWidth(new float[]{ 150, 150 });
+        table.setTotalWidth(new float[]{ 250, 150 });
         table.setLockedWidth(true);
 
-        table.addCell(addBorderlessCell("Podpis wystawiajacego",false,15,false));
-        table.addCell(addBorderlessCell("Podpis kupujacego",false, 15,false));
+        table.addCell(addBorderlessCell("Podpis wystawiajacego",true,15,true));
+        table.addCell(addBorderlessCell("Podpis kupujacego",false, 15,true));
+
+        document.add(table);
+    }
+
+    private void addFinalCost(Document document) throws DocumentException{
+        //View configuration
+        PdfPTable table = new PdfPTable(2);
+        table.setTotalWidth(new float[]{ 250, 150 });
+        table.setLockedWidth(true);
+
+        table.addCell(addBorderlessCell(" ",false, 15,false));
+        table.addCell(addBorderlessCell("Razem do zaplaty: " + finalCost,false, 15,true));
+
+        document.add(table);
+    }
+
+    private void addBottomBorder(Document document) throws DocumentException{
+        //View configuration
+        PdfPTable table = new PdfPTable(1);
+        table.setTotalWidth(new float[]{418});
+        table.setLockedWidth(true);
+        PdfPCell cell = new PdfPCell(new Phrase(" ", entriesFontBold));
+        cell.setFixedHeight(10);
+        cell.setBorder(Rectangle.BOTTOM);
+        table.addCell(cell);
 
         document.add(table);
     }
 
     private PdfPCell addItemsTitleCell(String name){
         PdfPCell cell = new PdfPCell(new Phrase(name, entriesFontBold));
-        cell.setFixedHeight(15);
-        cell.setBorder(Rectangle.BOTTOM);
+        cell.setFixedHeight(10);
+        cell.setBorder(Rectangle.RECTANGLE);
+
+        cell.setBackgroundColor(new BaseColor(178, 178, 178));
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+
         return cell;
     }
 
