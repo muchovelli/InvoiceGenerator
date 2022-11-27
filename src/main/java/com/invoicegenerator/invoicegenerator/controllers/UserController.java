@@ -1,6 +1,5 @@
-package com.invoicegenerator.invoicegenerator.web;
+package com.invoicegenerator.invoicegenerator.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +24,5 @@ public class UserController {
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         Map<String, Object> attributes = token.getTokenAttributes();
         return userDetailsService.loadUserByUsername(attributes.get("username").toString());
-
     }
 }

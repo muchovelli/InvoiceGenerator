@@ -1,4 +1,4 @@
-package com.invoicegenerator.invoicegenerator.web.resources;
+package com.invoicegenerator.invoicegenerator.controllers.resources;
 
 import lombok.Data;
 import lombok.NonNull;

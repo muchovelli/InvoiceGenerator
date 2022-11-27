@@ -1,105 +1,106 @@
 package com.invoicegenerator.invoicegenerator.config;
 
+import com.invoicegenerator.invoicegenerator.services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Component
+@Configuration
+//@EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        prePostEnabled = true
-)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+        // securedEnabled = true,
+        // jsr250Enabled = true,
+        prePostEnabled = true)
+@EnableWebSecurity
+public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 
-    public static final String AUTHORITIES_CLAIM_NAME = "roles";
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
 
-    public WebSecurityConfig(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors()
-                .and()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests(configurer ->
-                        configurer
-                                .antMatchers(
-                                        "/error",
-                                        "/login"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
-                );
+//  @Override
+//  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+//    authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+//  }
 
-        // JWT Validation Configuration
-        http.oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authenticationConverter());
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+//  @Bean
+//  @Override
+//  public AuthenticationManager authenticationManagerBean() throws Exception {
+//    return super.authenticationManagerBean();
+//  }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    @Override
-    protected UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-
-        UserDetails user1 = User
-                .withUsername("user1")
-                .authorities("ADMIN", "STAFF_MEMBER")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("1234")
-                .build();
-        manager.createUser(user1);
-
-        UserDetails user2 = User
-                .withUsername("user2")
-                .authorities("STAFF_MEMBER")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("1234")
-                .build();
-        manager.createUser(user2);
-
-        UserDetails user3 = User
-                .withUsername("user3")
-                .authorities("ASSISTANT_MANAGER", "STAFF_MEMBER")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("1234")
-                .build();
-        manager.createUser(user3);
-
-        UserDetails user4 = User
-                .withUsername("user4")
-                .authorities("MANAGER", "STAFF_MEMBER")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("1234")
-                .build();
-        manager.createUser(user4);
-
-        return manager;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
-    protected JwtAuthenticationConverter authenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthorityPrefix("");
-        authoritiesConverter.setAuthoritiesClaimName(AUTHORITIES_CLAIM_NAME);
+//  @Override
+//  protected void configure(HttpSecurity http) throws Exception {
+//    http.cors().and().csrf().disable()
+//      .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//      .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+//      .antMatchers("/api/test/**").permitAll()
+//      .antMatchers(h2ConsolePath + "/**").permitAll()
+//      .anyRequest().authenticated();
+//
+//    // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
+//    http.headers().frameOptions().sameOrigin();
+//
+//    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//  }
 
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-        return converter;
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/test/**").permitAll()
+                .antMatchers("localhost:8080" + "/**").permitAll()
+                .antMatchers("localhost:8080" + "/singup").permitAll()
+                .anyRequest().authenticated();
+
+       http.headers().frameOptions().sameOrigin();
+
+       http.authenticationProvider(authenticationProvider());
+
+       http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+       return http.build();
     }
 }
