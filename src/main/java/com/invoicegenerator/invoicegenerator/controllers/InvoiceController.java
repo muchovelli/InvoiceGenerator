@@ -2,11 +2,9 @@ package com.invoicegenerator.invoicegenerator.controllers;
 
 import com.invoicegenerator.invoicegenerator.model.Invoice;
 import com.invoicegenerator.invoicegenerator.model.PrivatePurchaser;
-
 import com.invoicegenerator.invoicegenerator.model.Vendor;
 import com.invoicegenerator.invoicegenerator.services.InvoiceService;
 import com.invoicegenerator.invoicegenerator.services.PrivatePurchaserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class InvoiceController {
-    @Autowired
+
     InvoiceService invoiceService;
 
-    @Autowired
     PrivatePurchaserService privatePurchaserService;
 
     @GetMapping("/listOfInvoices")
