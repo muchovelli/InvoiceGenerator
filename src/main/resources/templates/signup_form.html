@@ -24,45 +24,59 @@
         <div>
             <h1>User Registration - Sign Up</h1>
         </div>
-        <!-- <form th:action="@{/process_register}" th:object="${user}"
-            method="post" style="max-width: 600px; margin: 0 auto;">
-        <div class="m-3">
-            <div class="form-group row">
-                <label class="col-4 col-form-label">E-mail: </label>
-                <div class="col-8">
-                    <input type="email" th:field="*{email}" class="form-control" required />
-                </div>
-            </div>
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+            <meta charset="UTF-8">
+            <title>Sign Up</title>
+        </head>
+        <body>
+            <h1>Sign Up</h1>
+            <form id="signup-form" onsubmit="submitForm(event)">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <select name="roles[]" multiple hidden>
+                    <option selected value="user">User</option>
+                    <option value="admin">Admin</option>
+                    <option value="moderator">Moderator</option>
+                  </select>
+                <input type="submit" value="Sign Up">
+            </form>
+        </body>
+        </html>
 
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Password: </label>
-                <div class="col-8">
-                    <input type="password" th:field="*{password}" class="form-control"
-                            required minlength="6" maxlength="10"/>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-4 col-form-label">First Name: </label>
-                <div class="col-8">
-                    <input type="text" th:field="*{firstName}" class="form-control"
-                            required minlength="2" maxlength="20"/>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Last Name: </label>
-                <div class="col-8">
-                    <input type="text" th:field="*{lastName}" class="form-control"
-                            required minlength="2" maxlength="20" />
-                </div>
-            </div>
-
-            <div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-            </div>
-        </div>
-        </form> -->
     </div>
+
+    <script>
+    function submitForm(event) {
+      event.preventDefault();
+      const form = document.getElementById("signup-form");
+      const formData = new FormData(form);
+      const signupRequest = {};
+
+      formData.forEach((value, key) => {
+        if (key === 'roles[]') {
+          const roles = formData.getAll('roles[]');
+          signupRequest[key] = roles;
+        } else {
+          signupRequest[key] = value;
+        }
+      });
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/signup");
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          alert(response.message);
+        } else {
+          alert("Error: " + xhr.statusText);
+        }
+      };
+      xhr.send(JSON.stringify(signupRequest));
+    }
+    </script>
 </body>
 </html>
